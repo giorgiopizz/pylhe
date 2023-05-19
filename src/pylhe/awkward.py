@@ -37,6 +37,14 @@ def to_awkward(event_iterable):
             with builder.record(name="EventInfo"):
                 for fname in event.eventinfo.fieldnames:
                     builder.field(fname).real(getattr(event.eventinfo, fname))
+            builder.field('weights')
+            with builder.record(name="Weights"):
+                a = builder.field('values')
+                a.begin_list()
+                for weight in event.weights.keys():
+                    if 'rwgt' in weight:
+                        a.real(event.weights[weight])
+                a.end_list()
             builder.field("particles")
             with builder.list():
                 for particle in event.particles:
@@ -69,8 +77,13 @@ class EventInfo:
     pass
 
 
+class Weights:
+    pass
+
+
 # Register Awkward behaviors
 vector.register_awkward()
 ak.mixin_class(ak.behavior)(Particle)
 ak.mixin_class(ak.behavior)(Event)
 ak.mixin_class(ak.behavior)(EventInfo)
+ak.mixin_class(ak.behavior)(Weights)
