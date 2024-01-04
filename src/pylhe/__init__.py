@@ -272,9 +272,12 @@ def read_lhe_init(filepath):
                             except KeyError:
                                 print("weight must have attribute 'id'")
                                 raise
+                            txt = w.text
+                            if txt:
+                                txt = txt.strip()
                             _temp["weights"][wg_id] = {
                                 "attrib": w.attrib,
-                                "name": w.text.strip(),
+                                "name": txt,
                             }
 
                         initDict["weightgroup"][wg_type] = _temp

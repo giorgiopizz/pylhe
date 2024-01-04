@@ -27,7 +27,7 @@ def register_awkward():
     )
 
 
-def to_awkward(event_iterable):
+def to_awkward(event_iterable, weight_names=[]):
     """Convert iterable of LHEEvent instances to Awkward-Array."""
 
     builder = ak.ArrayBuilder()
@@ -39,12 +39,12 @@ def to_awkward(event_iterable):
                     builder.field(fname).real(getattr(event.eventinfo, fname))
             builder.field('weights')
             with builder.record(name="Weights"):
-                a = builder.field('values')
-                a.begin_list()
-                for weight in event.weights.keys():
-                    if 'rwgt' in weight:
-                        a.real(event.weights[weight])
-                a.end_list()
+                weights = builder.field('values')
+                weights.begin_list()
+                # for weight in event.weights.keys():
+                for weight_name in weight_names:
+                    weights.real(event.weights[weight_name])
+                weights.end_list()
             builder.field("particles")
             with builder.list():
                 for particle in event.particles:
